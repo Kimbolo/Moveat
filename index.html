@@ -1,0 +1,1183 @@
+import { useState } from "react";
+import { motion, AnimatePresence } from "motion/react";
+import { 
+  Home, 
+  Car, 
+  Package, 
+  Clock, 
+  User, 
+  ArrowLeft, 
+  MapPin, 
+  Star, 
+  Bell, 
+  CreditCard, 
+  ChevronRight,
+  Bike,
+  Users,
+  Tag,
+  Search,
+  TrendingUp,
+  Award
+} from "lucide-react";
+
+export default function App() {
+  const [currentPage, setCurrentPage] = useState("home");
+  const [fromLocation, setFromLocation] = useState("Akwa, Douala");
+  const [toLocation, setToLocation] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedVehicle, setSelectedVehicle] = useState<string | null>(null);
+
+  const user = { name: "Jean Kamdem", email: "jean.kamdem@email.com" };
+
+  // Page transition animation
+  const pageVariants = {
+    initial: { opacity: 0, x: 20 },
+    animate: { opacity: 1, x: 0 },
+    exit: { opacity: 0, x: -20 }
+  };
+
+  // Transport Page
+  if (currentPage === "transport") {
+    return (
+      <motion.div 
+        initial="initial"
+        animate="animate"
+        exit="exit"
+        variants={pageVariants}
+        style={{ minHeight: "100vh", backgroundColor: "#f9fafb", paddingBottom: "80px" }}
+      >
+        {/* Header */}
+        <div style={{ 
+          backgroundColor: "white", 
+          boxShadow: "0 1px 3px rgba(0,0,0,0.1)", 
+          position: "sticky", 
+          top: 0,
+          zIndex: 10
+        }}>
+          <div style={{ maxWidth: "512px", margin: "0 auto", padding: "16px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+              <motion.button 
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setCurrentPage("home")}
+                style={{ 
+                  padding: "8px", 
+                  borderRadius: "12px", 
+                  cursor: "pointer",
+                  border: "none",
+                  backgroundColor: "#f3f4f6",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center"
+                }}
+              >
+                <ArrowLeft size={20} color="#111827" />
+              </motion.button>
+              <h1 style={{ fontSize: "20px", fontWeight: "600", color: "#111827" }}>Transport</h1>
+            </div>
+          </div>
+        </div>
+
+        <div style={{ maxWidth: "512px", margin: "0 auto", padding: "16px" }}>
+          {/* Location Inputs */}
+          <motion.div 
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.1 }}
+            style={{ 
+              backgroundColor: "white", 
+              padding: "20px", 
+              borderRadius: "16px", 
+              boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
+              marginBottom: "24px" 
+            }}
+          >
+            <div style={{ marginBottom: "16px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "8px" }}>
+                <div style={{ 
+                  width: "8px", 
+                  height: "8px", 
+                  borderRadius: "50%", 
+                  backgroundColor: "#059669" 
+                }} />
+                <label style={{ fontSize: "12px", color: "#6b7280", fontWeight: "500" }}>Point de départ</label>
+              </div>
+              <input
+                placeholder="Akwa, Douala"
+                value={fromLocation}
+                onChange={(e) => setFromLocation(e.target.value)}
+                style={{ 
+                  width: "100%", 
+                  padding: "14px 16px", 
+                  border: "2px solid #e5e7eb", 
+                  borderRadius: "12px",
+                  fontSize: "15px",
+                  transition: "border-color 0.2s",
+                  outline: "none"
+                }}
+                onFocus={(e) => e.target.style.borderColor = "#059669"}
+                onBlur={(e) => e.target.style.borderColor = "#e5e7eb"}
+              />
+            </div>
+            
+            <div>
+              <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "8px" }}>
+                <MapPin size={12} color="#dc2626" />
+                <label style={{ fontSize: "12px", color: "#6b7280", fontWeight: "500" }}>Destination</label>
+              </div>
+              <input
+                placeholder="Où allez-vous ?"
+                value={toLocation}
+                onChange={(e) => setToLocation(e.target.value)}
+                style={{ 
+                  width: "100%", 
+                  padding: "14px 16px", 
+                  border: "2px solid #e5e7eb", 
+                  borderRadius: "12px",
+                  fontSize: "15px",
+                  transition: "border-color 0.2s",
+                  outline: "none"
+                }}
+                onFocus={(e) => e.target.style.borderColor = "#dc2626"}
+                onBlur={(e) => e.target.style.borderColor = "#e5e7eb"}
+              />
+            </div>
+          </motion.div>
+
+          {/* Vehicle Options */}
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.2 }}
+          >
+            <h3 style={{ fontSize: "16px", fontWeight: "600", color: "#111827", marginBottom: "12px" }}>
+              Choisir un véhicule
+            </h3>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "24px" }}>
+              {[
+                { name: "Moto", icon: Bike, price: "500", time: "5-10 min" },
+                { name: "Taxi", icon: Car, price: "1,500", time: "8-15 min" },
+                { name: "Partagé", icon: Users, price: "300", time: "10-20 min" },
+                { name: "Premium", icon: Car, price: "2,500", time: "5-10 min" }
+              ].map((vehicle) => {
+                const Icon = vehicle.icon;
+                const isSelected = selectedVehicle === vehicle.name;
+                
+                return (
+                  <motion.button
+                    key={vehicle.name}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setSelectedVehicle(vehicle.name)}
+                    style={{ 
+                      backgroundColor: isSelected ? "#ecfdf5" : "white", 
+                      padding: "20px 16px", 
+                      border: `2px solid ${isSelected ? "#059669" : "#e5e7eb"}`, 
+                      borderRadius: "16px", 
+                      textAlign: "center",
+                      cursor: "pointer",
+                      position: "relative",
+                      overflow: "hidden",
+                      transition: "all 0.2s"
+                    }}
+                  >
+                    {isSelected && (
+                      <motion.div
+                        layoutId="selectedVehicle"
+                        style={{
+                          position: "absolute",
+                          top: 8,
+                          right: 8,
+                          width: "20px",
+                          height: "20px",
+                          borderRadius: "50%",
+                          backgroundColor: "#059669",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center"
+                        }}
+                      >
+                        <div style={{ color: "white", fontSize: "12px" }}>✓</div>
+                      </motion.div>
+                    )}
+                    <Icon size={28} color={isSelected ? "#059669" : "#6b7280"} style={{ margin: "0 auto 12px" }} />
+                    <h4 style={{ fontWeight: "600", marginBottom: "4px", color: isSelected ? "#059669" : "#111827" }}>
+                      {vehicle.name}
+                    </h4>
+                    <div style={{ color: "#059669", fontWeight: "700", fontSize: "16px", marginBottom: "4px" }}>
+                      {vehicle.price} FCFA
+                    </div>
+                    <div style={{ fontSize: "11px", color: "#9ca3af" }}>
+                      {vehicle.time}
+                    </div>
+                  </motion.button>
+                );
+              })}
+            </div>
+          </motion.div>
+
+          {/* Promo Banner */}
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            style={{
+              background: "linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)",
+              padding: "16px 20px",
+              borderRadius: "16px",
+              marginBottom: "24px",
+              display: "flex",
+              alignItems: "center",
+              gap: "12px"
+            }}
+          >
+            <Tag size={20} color="#000" />
+            <div style={{ flex: 1 }}>
+              <div style={{ fontWeight: "600", fontSize: "14px", color: "#000", marginBottom: "2px" }}>
+                Première course -20%
+              </div>
+              <div style={{ fontSize: "12px", color: "#78350f" }}>
+                Code: BIENVENUE
+              </div>
+            </div>
+          </motion.div>
+
+          {/* CTA Button */}
+          <motion.button
+            whileTap={{ scale: 0.98 }}
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.4 }}
+            style={{
+              width: "100%",
+              padding: "18px",
+              fontWeight: "600",
+              fontSize: "16px",
+              borderRadius: "16px",
+              backgroundColor: toLocation && selectedVehicle ? "#059669" : "#e5e7eb",
+              color: toLocation && selectedVehicle ? "white" : "#9ca3af",
+              cursor: toLocation && selectedVehicle ? "pointer" : "not-allowed",
+              border: "none",
+              boxShadow: toLocation && selectedVehicle ? "0 4px 12px rgba(5,150,105,0.3)" : "none",
+              transition: "all 0.3s"
+            }}
+            disabled={!toLocation || !selectedVehicle}
+          >
+            {toLocation && selectedVehicle ? "Confirmer la course" : "Remplir les informations"}
+          </motion.button>
+        </div>
+
+        {/* Bottom Navigation */}
+        <BottomNav currentPage={currentPage} setCurrentPage={setCurrentPage} />
+      </motion.div>
+    );
+  }
+
+  // Delivery Page
+  if (currentPage === "delivery") {
+    return (
+      <motion.div 
+        initial="initial"
+        animate="animate"
+        exit="exit"
+        variants={pageVariants}
+        style={{ minHeight: "100vh", backgroundColor: "#f9fafb", paddingBottom: "80px" }}
+      >
+        {/* Header */}
+        <div style={{ 
+          backgroundColor: "white", 
+          boxShadow: "0 1px 3px rgba(0,0,0,0.1)", 
+          position: "sticky", 
+          top: 0,
+          zIndex: 10
+        }}>
+          <div style={{ maxWidth: "512px", margin: "0 auto", padding: "16px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+              <motion.button 
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setCurrentPage("home")}
+                style={{ 
+                  padding: "8px", 
+                  borderRadius: "12px", 
+                  cursor: "pointer",
+                  border: "none",
+                  backgroundColor: "#f3f4f6",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center"
+                }}
+              >
+                <ArrowLeft size={20} color="#111827" />
+              </motion.button>
+              <h1 style={{ fontSize: "20px", fontWeight: "600", color: "#111827" }}>Livraison</h1>
+            </div>
+          </div>
+        </div>
+
+        <div style={{ maxWidth: "512px", margin: "0 auto", padding: "16px" }}>
+          {/* Search Bar */}
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.1 }}
+            style={{ position: "relative", marginBottom: "16px" }}
+          >
+            <Search 
+              size={18} 
+              color="#9ca3af" 
+              style={{ 
+                position: "absolute", 
+                left: "16px", 
+                top: "50%", 
+                transform: "translateY(-50%)" 
+              }} 
+            />
+            <input
+              placeholder="Rechercher restaurants, plats..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              style={{ 
+                width: "100%", 
+                padding: "14px 16px 14px 48px", 
+                border: "2px solid #e5e7eb", 
+                borderRadius: "16px", 
+                backgroundColor: "white",
+                fontSize: "15px",
+                outline: "none",
+                transition: "border-color 0.2s"
+              }}
+              onFocus={(e) => e.target.style.borderColor = "#dc2626"}
+              onBlur={(e) => e.target.style.borderColor = "#e5e7eb"}
+            />
+          </motion.div>
+
+          {/* Location Banner */}
+          <motion.div 
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            style={{ 
+              background: "linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%)",
+              border: "2px solid #fecaca", 
+              borderRadius: "16px", 
+              padding: "16px 20px", 
+              marginBottom: "24px",
+              display: "flex",
+              alignItems: "center",
+              gap: "12px"
+            }}
+          >
+            <MapPin size={20} color="#dc2626" />
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: "12px", fontWeight: "600", color: "#991b1b", marginBottom: "2px" }}>
+                Livraison à
+              </div>
+              <div style={{ fontWeight: "600", color: "#111827" }}>Akwa, Douala</div>
+            </div>
+            <ChevronRight size={18} color="#dc2626" />
+          </motion.div>
+
+          {/* Categories */}
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            style={{ marginBottom: "24px" }}
+          >
+            <div style={{ 
+              display: "flex", 
+              gap: "12px", 
+              overflowX: "auto", 
+              paddingBottom: "8px",
+              scrollbarWidth: "none",
+              msOverflowStyle: "none"
+            }}>
+              {["Tous", "Restaurants", "Fast-Food", "Pharmacies", "Épiceries"].map((cat, idx) => (
+                <motion.button
+                  key={cat}
+                  whileTap={{ scale: 0.95 }}
+                  style={{
+                    padding: "10px 20px",
+                    borderRadius: "12px",
+                    backgroundColor: idx === 0 ? "#dc2626" : "white",
+                    color: idx === 0 ? "white" : "#6b7280",
+                    border: idx === 0 ? "none" : "2px solid #e5e7eb",
+                    fontSize: "14px",
+                    fontWeight: "600",
+                    whiteSpace: "nowrap",
+                    cursor: "pointer",
+                    transition: "all 0.2s"
+                  }}
+                >
+                  {cat}
+                </motion.button>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Restaurants List */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+            {[
+              { name: "Chez Tante Marie", rating: 4.8, time: "20-30 min", category: "Cuisine locale", emoji: "🍽️", promo: true },
+              { name: "Pizza Palace", rating: 4.6, time: "25-35 min", category: "Pizzas & Burgers", emoji: "🍕" },
+              { name: "Pharmacie Centre", rating: 4.9, time: "10-20 min", category: "Santé & Bien-être", emoji: "💊" },
+              { name: "Café des Arts", rating: 4.4, time: "15-20 min", category: "Café & Pâtisserie", emoji: "☕" }
+            ].map((restaurant, index) => (
+              <motion.div
+                key={index}
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.4 + index * 0.1 }}
+                whileTap={{ scale: 0.98 }}
+                style={{ 
+                  backgroundColor: "white", 
+                  borderRadius: "16px", 
+                  overflow: "hidden",
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
+                  cursor: "pointer",
+                  position: "relative"
+                }}
+              >
+                {restaurant.promo && (
+                  <div style={{
+                    position: "absolute",
+                    top: "12px",
+                    left: "12px",
+                    backgroundColor: "#dc2626",
+                    color: "white",
+                    padding: "4px 10px",
+                    borderRadius: "8px",
+                    fontSize: "11px",
+                    fontWeight: "600",
+                    zIndex: 1
+                  }}>
+                    -20%
+                  </div>
+                )}
+                <div style={{ display: "flex" }}>
+                  <div style={{ 
+                    width: "100px", 
+                    height: "100px", 
+                    background: "linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%)",
+                    display: "flex", 
+                    alignItems: "center", 
+                    justifyContent: "center",
+                    flexShrink: 0
+                  }}>
+                    <span style={{ fontSize: "40px" }}>{restaurant.emoji}</span>
+                  </div>
+                  <div style={{ flex: 1, padding: "16px" }}>
+                    <h4 style={{ fontWeight: "600", fontSize: "16px", color: "#111827", marginBottom: "4px" }}>
+                      {restaurant.name}
+                    </h4>
+                    <div style={{ fontSize: "13px", color: "#6b7280", marginBottom: "8px" }}>
+                      {restaurant.category}
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: "12px", fontSize: "13px" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                        <Star size={14} fill="#fbbf24" color="#fbbf24" />
+                        <span style={{ fontWeight: "600", color: "#111827" }}>{restaurant.rating}</span>
+                      </div>
+                      <div style={{ color: "#9ca3af" }}>•</div>
+                      <div style={{ color: "#6b7280" }}>
+                        <Clock size={14} style={{ display: "inline", verticalAlign: "middle", marginRight: "4px" }} />
+                        {restaurant.time}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
+        {/* Bottom Navigation */}
+        <BottomNav currentPage={currentPage} setCurrentPage={setCurrentPage} />
+      </motion.div>
+    );
+  }
+
+  // History Page
+  if (currentPage === "history") {
+    return (
+      <motion.div 
+        initial="initial"
+        animate="animate"
+        exit="exit"
+        variants={pageVariants}
+        style={{ minHeight: "100vh", backgroundColor: "#f9fafb", paddingBottom: "80px" }}
+      >
+        {/* Header */}
+        <div style={{ 
+          backgroundColor: "white", 
+          boxShadow: "0 1px 3px rgba(0,0,0,0.1)", 
+          position: "sticky", 
+          top: 0,
+          zIndex: 10
+        }}>
+          <div style={{ maxWidth: "512px", margin: "0 auto", padding: "16px" }}>
+            <h1 style={{ fontSize: "20px", fontWeight: "600", color: "#111827" }}>Historique</h1>
+          </div>
+        </div>
+
+        <div style={{ maxWidth: "512px", margin: "0 auto", padding: "16px" }}>
+          {/* Tabs */}
+          <div style={{ 
+            display: "flex", 
+            gap: "8px", 
+            marginBottom: "24px",
+            backgroundColor: "white",
+            padding: "6px",
+            borderRadius: "12px",
+            border: "2px solid #f3f4f6"
+          }}>
+            {["Courses", "Livraisons"].map((tab, idx) => (
+              <button
+                key={tab}
+                style={{
+                  flex: 1,
+                  padding: "10px",
+                  borderRadius: "8px",
+                  backgroundColor: idx === 0 ? "#059669" : "transparent",
+                  color: idx === 0 ? "white" : "#6b7280",
+                  border: "none",
+                  fontSize: "14px",
+                  fontWeight: "600",
+                  cursor: "pointer",
+                  transition: "all 0.2s"
+                }}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
+
+          {/* History Items */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+            {[
+              { type: "transport", from: "Akwa", to: "Bonanjo", date: "Aujourd'hui, 14:30", price: "1,500", status: "Terminé" },
+              { type: "transport", from: "Bonapriso", to: "Akwa", date: "Hier, 09:15", price: "800", status: "Terminé" },
+              { type: "delivery", name: "Chez Tante Marie", items: "3 articles", date: "27 Nov, 18:45", price: "4,200", status: "Livré" }
+            ].map((item, index) => (
+              <motion.div
+                key={index}
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: index * 0.1 }}
+                style={{
+                  backgroundColor: "white",
+                  padding: "16px",
+                  borderRadius: "16px",
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.06)"
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "start", gap: "12px" }}>
+                  <div style={{
+                    width: "48px",
+                    height: "48px",
+                    borderRadius: "12px",
+                    backgroundColor: item.type === "transport" ? "#ecfdf5" : "#fef2f2",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexShrink: 0
+                  }}>
+                    {item.type === "transport" ? (
+                      <Car size={24} color="#059669" />
+                    ) : (
+                      <Package size={24} color="#dc2626" />
+                    )}
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    {item.type === "transport" ? (
+                      <>
+                        <div style={{ fontWeight: "600", fontSize: "15px", color: "#111827", marginBottom: "4px" }}>
+                          {item.from} → {item.to}
+                        </div>
+                        <div style={{ fontSize: "13px", color: "#6b7280", marginBottom: "8px" }}>
+                          {item.date}
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div style={{ fontWeight: "600", fontSize: "15px", color: "#111827", marginBottom: "4px" }}>
+                          {item.name}
+                        </div>
+                        <div style={{ fontSize: "13px", color: "#6b7280", marginBottom: "8px" }}>
+                          {item.items} • {item.date}
+                        </div>
+                      </>
+                    )}
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                      <span style={{ 
+                        fontSize: "12px", 
+                        color: "#059669", 
+                        backgroundColor: "#ecfdf5",
+                        padding: "4px 10px",
+                        borderRadius: "6px",
+                        fontWeight: "600"
+                      }}>
+                        {item.status}
+                      </span>
+                      <span style={{ fontSize: "16px", fontWeight: "700", color: "#111827" }}>
+                        {item.price} FCFA
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
+        {/* Bottom Navigation */}
+        <BottomNav currentPage={currentPage} setCurrentPage={setCurrentPage} />
+      </motion.div>
+    );
+  }
+
+  // Profile Page
+  if (currentPage === "profile") {
+    return (
+      <motion.div 
+        initial="initial"
+        animate="animate"
+        exit="exit"
+        variants={pageVariants}
+        style={{ minHeight: "100vh", backgroundColor: "#f9fafb", paddingBottom: "80px" }}
+      >
+        {/* Header */}
+        <div style={{ 
+          backgroundColor: "white", 
+          boxShadow: "0 1px 3px rgba(0,0,0,0.1)"
+        }}>
+          <div style={{ maxWidth: "512px", margin: "0 auto", padding: "16px" }}>
+            <h1 style={{ fontSize: "20px", fontWeight: "600", color: "#111827" }}>Profil</h1>
+          </div>
+        </div>
+
+        <div style={{ maxWidth: "512px", margin: "0 auto", padding: "16px" }}>
+          {/* User Info Card */}
+          <motion.div 
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.1 }}
+            style={{ 
+              backgroundColor: "white", 
+              padding: "24px", 
+              borderRadius: "20px", 
+              textAlign: "center", 
+              marginBottom: "24px",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.06)"
+            }}
+          >
+            <motion.div 
+              whileHover={{ scale: 1.05 }}
+              style={{ 
+                width: "90px", 
+                height: "90px", 
+                background: "linear-gradient(135deg, #059669 0%, #047857 100%)",
+                borderRadius: "50%", 
+                display: "flex", 
+                alignItems: "center", 
+                justifyContent: "center", 
+                margin: "0 auto 16px",
+                boxShadow: "0 4px 12px rgba(5,150,105,0.3)"
+              }}
+            >
+              <User size={40} color="white" />
+            </motion.div>
+            <h2 style={{ fontSize: "22px", fontWeight: "700", marginBottom: "4px", color: "#111827" }}>
+              {user.name}
+            </h2>
+            <p style={{ color: "#6b7280", fontSize: "14px" }}>{user.email}</p>
+            
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              style={{
+                marginTop: "16px",
+                padding: "10px 24px",
+                borderRadius: "12px",
+                backgroundColor: "#f3f4f6",
+                border: "none",
+                fontSize: "14px",
+                fontWeight: "600",
+                color: "#111827",
+                cursor: "pointer"
+              }}
+            >
+              Modifier le profil
+            </motion.button>
+          </motion.div>
+
+          {/* Stats Grid */}
+          <motion.div 
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "12px", marginBottom: "24px" }}
+          >
+            {[
+              { icon: Car, value: "12", label: "Trajets", color: "#059669" },
+              { icon: Package, value: "8", label: "Livraisons", color: "#dc2626" },
+              { icon: Award, value: "Gold", label: "Statut", color: "#fbbf24" }
+            ].map((stat, idx) => {
+              const Icon = stat.icon;
+              return (
+                <motion.div
+                  key={idx}
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.3 + idx * 0.1 }}
+                  style={{ 
+                    backgroundColor: "white", 
+                    padding: "20px 12px", 
+                    borderRadius: "16px", 
+                    textAlign: "center",
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.06)"
+                  }}
+                >
+                  <Icon size={24} color={stat.color} style={{ margin: "0 auto 8px" }} />
+                  <div style={{ fontSize: "20px", fontWeight: "700", color: "#111827", marginBottom: "4px" }}>
+                    {stat.value}
+                  </div>
+                  <div style={{ fontSize: "12px", color: "#6b7280" }}>{stat.label}</div>
+                </motion.div>
+              );
+            })}
+          </motion.div>
+
+          {/* Menu Items */}
+          <motion.div 
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.4 }}
+            style={{ 
+              backgroundColor: "white", 
+              borderRadius: "16px",
+              overflow: "hidden",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.06)"
+            }}
+          >
+            {[
+              { label: "Informations personnelles", icon: User },
+              { label: "Adresses enregistrées", icon: MapPin },
+              { label: "Moyens de paiement", icon: CreditCard },
+              { label: "Notifications", icon: Bell }
+            ].map((item, index) => {
+              const Icon = item.icon;
+              return (
+                <motion.div
+                  key={index}
+                  whileTap={{ scale: 0.98 }}
+                  style={{ 
+                    padding: "18px 20px", 
+                    display: "flex", 
+                    alignItems: "center", 
+                    gap: "16px", 
+                    borderBottom: index < 3 ? "1px solid #f3f4f6" : "none",
+                    cursor: "pointer",
+                    transition: "background-color 0.2s"
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#f9fafb"}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}
+                >
+                  <div style={{
+                    width: "44px",
+                    height: "44px",
+                    borderRadius: "12px",
+                    backgroundColor: "#f3f4f6",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexShrink: 0
+                  }}>
+                    <Icon size={20} color="#6b7280" />
+                  </div>
+                  <span style={{ flex: 1, fontSize: "15px", fontWeight: "500", color: "#111827" }}>
+                    {item.label}
+                  </span>
+                  <ChevronRight size={20} color="#9ca3af" />
+                </motion.div>
+              );
+            })}
+          </motion.div>
+
+          {/* Logout Button */}
+          <motion.button
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            whileTap={{ scale: 0.98 }}
+            style={{
+              width: "100%",
+              marginTop: "24px",
+              padding: "16px",
+              borderRadius: "16px",
+              backgroundColor: "white",
+              border: "2px solid #fee2e2",
+              color: "#dc2626",
+              fontSize: "15px",
+              fontWeight: "600",
+              cursor: "pointer"
+            }}
+          >
+            Se déconnecter
+          </motion.button>
+        </div>
+
+        {/* Bottom Navigation */}
+        <BottomNav currentPage={currentPage} setCurrentPage={setCurrentPage} />
+      </motion.div>
+    );
+  }
+
+  // Homepage (default)
+  return (
+    <motion.div 
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      variants={pageVariants}
+      style={{ minHeight: "100vh", backgroundColor: "#f9fafb", paddingBottom: "80px" }}
+    >
+      {/* Header */}
+      <div style={{ 
+        backgroundColor: "white", 
+        boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+        position: "sticky",
+        top: 0,
+        zIndex: 10
+      }}>
+        <div style={{ maxWidth: "512px", margin: "0 auto", padding: "16px" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+              <motion.div 
+                whileHover={{ rotate: 360 }}
+                transition={{ duration: 0.6 }}
+                style={{ 
+                  width: "52px", 
+                  height: "52px", 
+                  background: "linear-gradient(135deg, #059669 0%, #047857 100%)",
+                  borderRadius: "16px", 
+                  display: "flex", 
+                  alignItems: "center", 
+                  justifyContent: "center",
+                  boxShadow: "0 4px 12px rgba(5,150,105,0.3)"
+                }}
+              >
+                <span style={{ color: "white", fontWeight: "800", fontSize: "18px" }}>CG</span>
+              </motion.div>
+              <div>
+                <h1 style={{ fontSize: "20px", fontWeight: "700", color: "#111827" }}>CamerounGo</h1>
+                <p style={{ fontSize: "12px", color: "#6b7280" }}>Transport et Livraison</p>
+              </div>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+              <div style={{ 
+                display: "flex", 
+                alignItems: "center", 
+                gap: "6px",
+                backgroundColor: "#f3f4f6",
+                padding: "8px 12px",
+                borderRadius: "10px"
+              }}>
+                <MapPin size={14} color="#059669" />
+                <span style={{ fontSize: "13px", color: "#111827", fontWeight: "600" }}>Douala</span>
+              </div>
+              <motion.button 
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setCurrentPage("profile")}
+                style={{ 
+                  width: "44px", 
+                  height: "44px", 
+                  borderRadius: "50%", 
+                  background: "linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)",
+                  display: "flex", 
+                  alignItems: "center", 
+                  justifyContent: "center", 
+                  cursor: "pointer",
+                  border: "none"
+                }}
+              >
+                <User size={20} color="#059669" />
+              </motion.button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style={{ maxWidth: "512px", margin: "0 auto", padding: "16px" }}>
+        {/* Greeting */}
+        <motion.div 
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.1 }}
+          style={{ textAlign: "center", padding: "20px 0 24px" }}
+        >
+          <h2 style={{ fontSize: "26px", fontWeight: "700", color: "#111827", marginBottom: "8px" }}>
+            Bonjour {user.name.split(' ')[0]} ! 👋
+          </h2>
+          <p style={{ color: "#6b7280", fontSize: "15px" }}>Où voulez-vous aller aujourd'hui ?</p>
+        </motion.div>
+
+        {/* Main Service Cards */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "16px", marginBottom: "24px" }}>
+          <motion.button
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => setCurrentPage("transport")}
+            style={{ 
+              width: "100%", 
+              background: "linear-gradient(135deg, #059669 0%, #047857 100%)",
+              color: "white", 
+              padding: "24px", 
+              borderRadius: "20px", 
+              boxShadow: "0 8px 16px rgba(5,150,105,0.25)",
+              cursor: "pointer",
+              border: "none",
+              position: "relative",
+              overflow: "hidden"
+            }}
+          >
+            <div style={{ 
+              position: "absolute",
+              top: "-20px",
+              right: "-20px",
+              width: "100px",
+              height: "100px",
+              borderRadius: "50%",
+              backgroundColor: "rgba(255,255,255,0.1)"
+            }} />
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", position: "relative" }}>
+              <div style={{ textAlign: "left" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "8px" }}>
+                  <Car size={28} />
+                  <span style={{ fontWeight: "700", fontSize: "20px" }}>Transport</span>
+                </div>
+                <p style={{ fontSize: "14px", opacity: 0.9 }}>Moto • Taxi • Partagé • Premium</p>
+              </div>
+              <ChevronRight size={28} style={{ opacity: 0.8 }} />
+            </div>
+          </motion.button>
+
+          <motion.button
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => setCurrentPage("delivery")}
+            style={{ 
+              width: "100%", 
+              background: "linear-gradient(135deg, #dc2626 0%, #991b1b 100%)",
+              color: "white", 
+              padding: "24px", 
+              borderRadius: "20px", 
+              boxShadow: "0 8px 16px rgba(220,38,38,0.25)",
+              cursor: "pointer",
+              border: "none",
+              position: "relative",
+              overflow: "hidden"
+            }}
+          >
+            <div style={{ 
+              position: "absolute",
+              top: "-20px",
+              right: "-20px",
+              width: "100px",
+              height: "100px",
+              borderRadius: "50%",
+              backgroundColor: "rgba(255,255,255,0.1)"
+            }} />
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", position: "relative" }}>
+              <div style={{ textAlign: "left" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "8px" }}>
+                  <Package size={28} />
+                  <span style={{ fontWeight: "700", fontSize: "20px" }}>Livraison</span>
+                </div>
+                <p style={{ fontSize: "14px", opacity: 0.9 }}>Restaurants • Pharmacies • Épiceries</p>
+              </div>
+              <ChevronRight size={28} style={{ opacity: 0.8 }} />
+            </div>
+          </motion.button>
+        </div>
+
+        {/* Promo Banner */}
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.4 }}
+          whileTap={{ scale: 0.98 }}
+          style={{ 
+            background: "linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)",
+            color: "black", 
+            padding: "20px", 
+            borderRadius: "20px", 
+            marginBottom: "24px",
+            boxShadow: "0 4px 12px rgba(251,191,36,0.3)",
+            cursor: "pointer",
+            position: "relative",
+            overflow: "hidden"
+          }}
+        >
+          <div style={{ 
+            position: "absolute",
+            bottom: "-30px",
+            right: "-30px",
+            width: "120px",
+            height: "120px",
+            borderRadius: "50%",
+            backgroundColor: "rgba(0,0,0,0.05)"
+          }} />
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", position: "relative" }}>
+            <div>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
+                <Tag size={20} />
+                <h3 style={{ fontWeight: "700", fontSize: "18px" }}>Offre spéciale</h3>
+              </div>
+              <p style={{ fontSize: "14px", opacity: 0.8 }}>-20% sur votre première course</p>
+            </div>
+            <motion.button 
+              whileTap={{ scale: 0.95 }}
+              style={{ 
+                backgroundColor: "black", 
+                color: "#fbbf24",
+                padding: "10px 20px", 
+                borderRadius: "12px", 
+                fontSize: "14px", 
+                fontWeight: "700",
+                cursor: "pointer",
+                border: "none"
+              }}
+            >
+              Profiter
+            </motion.button>
+          </div>
+        </motion.div>
+
+        {/* Quick Stats */}
+        <motion.div 
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.5 }}
+          style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}
+        >
+          <motion.div
+            whileHover={{ y: -4 }}
+            style={{ 
+              backgroundColor: "white", 
+              padding: "20px", 
+              borderRadius: "16px", 
+              textAlign: "center",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.06)"
+            }}
+          >
+            <TrendingUp size={24} color="#059669" style={{ margin: "0 auto 8px" }} />
+            <div style={{ fontSize: "28px", fontWeight: "700", color: "#059669", marginBottom: "4px" }}>12</div>
+            <div style={{ fontSize: "14px", color: "#6b7280" }}>Trajets effectués</div>
+          </motion.div>
+          
+          <motion.div
+            whileHover={{ y: -4 }}
+            style={{ 
+              backgroundColor: "white", 
+              padding: "20px", 
+              borderRadius: "16px", 
+              textAlign: "center",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.06)"
+            }}
+          >
+            <Package size={24} color="#dc2626" style={{ margin: "0 auto 8px" }} />
+            <div style={{ fontSize: "28px", fontWeight: "700", color: "#dc2626", marginBottom: "4px" }}>8</div>
+            <div style={{ fontSize: "14px", color: "#6b7280" }}>Livraisons reçues</div>
+          </motion.div>
+        </motion.div>
+      </div>
+
+      {/* Bottom Navigation */}
+      <BottomNav currentPage={currentPage} setCurrentPage={setCurrentPage} />
+    </motion.div>
+  );
+}
+
+// Bottom Navigation Component
+function BottomNav({ currentPage, setCurrentPage }: { currentPage: string; setCurrentPage: (page: string) => void }) {
+  const navItems = [
+    { id: "home", label: "Accueil", icon: Home },
+    { id: "transport", label: "Transport", icon: Car },
+    { id: "delivery", label: "Livraison", icon: Package },
+    { id: "history", label: "Activité", icon: Clock },
+    { id: "profile", label: "Profil", icon: User }
+  ];
+
+  return (
+    <div style={{ 
+      position: "fixed", 
+      bottom: 0, 
+      left: 0, 
+      right: 0, 
+      backgroundColor: "white", 
+      borderTop: "1px solid #f3f4f6",
+      boxShadow: "0 -4px 12px rgba(0,0,0,0.05)",
+      zIndex: 50
+    }}>
+      <div style={{ maxWidth: "512px", margin: "0 auto" }}>
+        <div style={{ display: "flex", justifyContent: "space-around", padding: "8px 4px" }}>
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = currentPage === item.id;
+            
+            return (
+              <motion.button
+                key={item.id}
+                whileTap={{ scale: 0.9 }}
+                onClick={() => setCurrentPage(item.id)}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: "4px",
+                  padding: "10px 12px",
+                  borderRadius: "12px",
+                  backgroundColor: isActive ? "#ecfdf5" : "transparent",
+                  color: isActive ? "#059669" : "#9ca3af",
+                  cursor: "pointer",
+                  border: "none",
+                  transition: "all 0.2s",
+                  position: "relative",
+                  minWidth: "64px"
+                }}
+              >
+                {isActive && (
+                  <motion.div
+                    layoutId="activeTab"
+                    style={{
+                      position: "absolute",
+                      top: 0,
+                      left: "50%",
+                      transform: "translateX(-50%)",
+                      width: "32px",
+                      height: "3px",
+                      borderRadius: "0 0 3px 3px",
+                      backgroundColor: "#059669"
+                    }}
+                  />
+                )}
+                <Icon size={22} strokeWidth={isActive ? 2.5 : 2} />
+                <span style={{ 
+                  fontSize: "11px", 
+                  fontWeight: isActive ? "600" : "500",
+                  transition: "all 0.2s"
+                }}>
+                  {item.label}
+                </span>
+              </motion.button>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
